@@ -50,30 +50,6 @@ export function EDIT_ORDER(id, qty) {
     }
 }
 
-export function LOGIN(email, password) {
-    return {
-        type: 'TOKEN',
-        payload: axios.post(`${ip}/login`, {
-            email,
-            password
-        }).then((response) => response.data.token)
-    }
-}
-
-export function REGISTER(username, email, password) {
-    return {
-        type: 'TOKEN',
-        payload: axios.post(`${ip}/register`, {
-            username,
-            email,
-            password
-        }).then( async (response) =>
-            await AsyncStorage.setItem('token', response.data.token),
-            response.data.token
-        )
-    }
-}
-
 export function DELETE_ORDER(id) {
     return {
         payload: axios.delete(`${ip}/order/${id}`)

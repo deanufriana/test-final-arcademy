@@ -20,7 +20,7 @@ class HomeScreen extends Component {
     }
 
     async componentDidMount() {
-      //const getToken = await AsyncStorage.setItem('token', this.props.user.token)
+
         const token = await AsyncStorage.getItem('token')
         this.setState({ token })
         this.props.dispatch(LIST_PRODUCTS())
@@ -94,7 +94,7 @@ class HomeScreen extends Component {
                     <Body />
 
                     <Right>
-                        {this.props.user.token === '' ?
+                        {this.state.token === null ?
                             <Button transparent onPress={() => this.props.navigation.navigate('LoginRegister')}>
                                 <Text>Login</Text>
                             </Button> :
@@ -104,7 +104,7 @@ class HomeScreen extends Component {
                     </Right>
 
                 </Header>
-                {this.props.user.token != '' &&
+                {this.state.token != null &&
                     <Form>
                         
                         

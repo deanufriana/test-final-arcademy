@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { View, ActivityIndicator } from 'react-native'
+import { View, ActivityIndicator, AsyncStorage } from 'react-native'
 import { Input, Button, Text, Container, Form, Item, Content } from 'native-base';
-import { LOGIN, REGISTER } from '../actions/products'
 import { connect } from 'react-redux'
+import axios from 'axios';
+import ip from '../config'
 
 class LoginLogout extends Component {
     state = {
@@ -13,20 +14,72 @@ class LoginLogout extends Component {
         isLoading: false
     }
 
-    loginRegister = async () => {
-        this.setState({ isLoading: true })
-        if (this.state.wantLogin) {
+    loginRegister = () => {
 
-            await this.props.dispatch(LOGIN(this.state.email, this.state.password))
-            this.props.navigation.navigate('Home')
-            this.setState({ isLoading: false })
+        this.setState({ isLoading: true })
+
+        if (this.state.wantLogin) {
+            axios.post(`${ip}/login`,
+                {
+                    email: this.state.email,
+                    password: this.state.password,
+
+                }
+            ).then(async (response) => {
+                console.log(response.data.token)
+                try {
+
+                    await AsyncStorage.setItem('token', response.data.token).then(() => {
+                        this.setState({ isLoading: false })
+                        this.props.navigation.push('Home')
+                    })
+
+                } catch (error) {
+
+                    this.setState({ isLoading: false })
+                    alert(error)
+
+                }
+
+            }).catch((error) => {
+
+                alert('Username & Password Salah')
+                this.setState({ isLoading: false })
+
+            })
 
         } else {
 
-            await this.props.dispatch(REGISTER(this.state.username, this.state.email, this.state.password))
-            this.props.navigation.navigate('Home')
-            this.setState({ isLoading: false })
+            axios.post(`${ip}/register`,
+                {
+                    email: this.state.email,
+                    password: this.state.password,
+                    username: this.state.username,
+                }
+            ).then((response) => {
 
+                try {
+
+                    AsyncStorage.setItem('token', response.data.token).then(() => {
+                        this.props.navigation.push('Home')
+                        this.setState({ isLoading: false })
+
+                    })
+
+                } catch (error) {
+
+                    this.setState({ isLoading: false })
+                    alert(error)
+
+                }
+
+
+            }).catch((error) => {
+
+                alert('Username & Password Salah')
+                this.setState({ isLoading: false })
+
+            })
         }
     }
 
